@@ -209,34 +209,28 @@
 
   /* ── Method ── */
   #method { background: var(--bg2); }
-  .method-container { max-width: 1280px; }
-  .method-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.75fr);
-    gap: 2rem;
-    align-items: start;
-  }
+  .method-container { max-width: 1220px; }
   .method-img-wrap {
     border-radius: var(--r);
     overflow: hidden;
     border: 1px solid var(--border);
     background: white;
-    padding: 0.8rem;
-    box-shadow: 0 18px 48px rgba(15,23,42,0.12);
+    padding: 1.1rem;
+    box-shadow: 0 24px 64px rgba(15,23,42,0.14);
     margin-bottom: 1rem;
   }
   .method-img-wrap img { width: 100%; display: block; }
   .features-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
-    margin-top: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
   }
   .feature-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 1.5rem;
+    border-radius: 8px;
+    padding: 1.35rem;
     transition: border-color 0.2s, background 0.2s;
   }
   .feature-card:hover { border-color: rgba(91,143,255,0.25); background: rgba(91,143,255,0.04); }
@@ -248,8 +242,8 @@
   .feature-icon.blue { background: rgba(91,143,255,0.15); }
   .feature-icon.purple { background: rgba(167,139,250,0.15); }
   .feature-icon.amber { background: rgba(245,158,11,0.15); }
-  .feature-card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
-  .feature-card p { font-size: 0.85rem; margin: 0; }
+  .feature-card h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 0.55rem; color: var(--text); }
+  .feature-card p { font-size: 0.86rem; margin: 0; line-height: 1.65; }
   .method-side-caption { text-align: left; margin-top: 0.85rem; }
 
   /* ── Results / Slider ── */
@@ -357,21 +351,52 @@
     font-family: 'JetBrains Mono', monospace;
   }
   .three-btn.active { background: rgba(91,143,255,0.15); border-color: var(--accent); color: var(--accent); }
-  /* Gallery row */
-  .gallery-grid {
+  .method-gallery {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(210px, 26%);
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding: 0.2rem 0 1rem;
     margin-top: 2rem;
+    scroll-snap-type: x mandatory;
   }
-  .gallery-cell { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-  .gallery-cell img { width: 100%; display: block; }
+  .method-gallery::-webkit-scrollbar,
+  .table-wrap::-webkit-scrollbar { height: 10px; }
+  .method-gallery::-webkit-scrollbar-thumb,
+  .table-wrap::-webkit-scrollbar-thumb { background: rgba(37,99,235,0.24); border-radius: 99px; }
+  .method-gallery::-webkit-scrollbar-track,
+  .table-wrap::-webkit-scrollbar-track { background: rgba(15,23,42,0.05); border-radius: 99px; }
+  .gallery-cell {
+    scroll-snap-align: start;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .gallery-cell img { width: 100%; display: block; aspect-ratio: 762 / 512; object-fit: cover; }
   .gallery-cell-label {
-    text-align: center; font-size: 0.75rem; font-weight: 600;
-    color: var(--dim); padding: 0.4rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--dim);
+    padding: 0.48rem 0.65rem;
     background: var(--bg3);
     font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
+  }
+  .gallery-cell.ours {
+    border-color: rgba(37,99,235,0.45);
+    box-shadow: 0 14px 36px rgba(37,99,235,0.14);
+  }
+  .gallery-cell.ours .gallery-cell-label { color: var(--accent); background: rgba(37,99,235,0.08); }
+  .gallery-note {
+    font-size: 0.8rem;
+    color: var(--dim);
+    margin-top: -0.35rem;
   }
   .paper-visual-wrap {
     margin-top: 2.4rem;
@@ -426,6 +451,7 @@
   .table-title { margin-bottom:0.8rem; font-size:0.88rem; }
   .table-subtitle { margin: 1rem 0 0.65rem; font-size: 0.82rem; color: var(--dim); }
   table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 700px; }
+  .combined-table { min-width: 1860px; }
   th {
     background: var(--bg3);
     padding: 0.75rem 1rem;
@@ -438,6 +464,13 @@
     white-space: nowrap;
   }
   th.task-header { background: rgba(91,143,255,0.08); color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+  th.setting-band {
+    background: #111827;
+    color: white;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.02em;
+  }
   td {
     padding: 0.65rem 1rem;
     text-align: center;
@@ -446,11 +479,23 @@
     white-space: nowrap;
   }
   tr:last-child td { border-bottom: none; }
+  td.setting-col {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-align: left;
+  }
   td.method-col { text-align: left; font-weight: 600; color: var(--text); font-size: 0.85rem; }
   tr.ours-row td { background: rgba(91,143,255,0.06); }
   tr.ours-row td.method-col { color: var(--accent); }
-  td.best { font-weight: 700; color: var(--text); }
-  td.second { color: #a78bfa; text-decoration: underline; text-decoration-color: rgba(167,139,250,0.5); }
+  td.best { font-weight: 800; color: var(--text); }
+  td.second {
+    color: #6d28d9;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 2px;
+    text-decoration-color: rgba(109,40,217,0.55);
+  }
 
   /* ── BibTeX ── */
   #bibtex { padding: 80px 2rem; }
@@ -502,9 +547,8 @@
   @media (max-width: 640px) {
     .nav-links { display: none; }
     .abstract-card { padding: 1.5rem; }
-    .gallery-grid { grid-template-columns: 1fr; }
+    .method-gallery { grid-auto-columns: minmax(220px, 82%); }
     .features-grid { grid-template-columns: 1fr; }
-    .method-layout { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -565,7 +609,7 @@
 <section id="teaser" style="background:var(--bg); padding:60px 2rem 0;">
   <div class="container">
     <div class="teaser-img-wrap" style="background:#fff; padding:1.5rem;">
-      <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/teaser.png" alt="SLAIR Teaser: Latent Space Separation and ODE Trajectory">
+      <img src="image/teaser.png" alt="SLAIR Teaser: Latent Space Separation and ODE Trajectory">
     </div>
     <p class="fig-caption">
       <strong style="color:var(--text)">Fig. 1</strong> — (a) t-SNE visualization showing our Degradation VAE cleanly separating 10 degradation types in latent space, versus the entangled original VAE space. (b) ODE trajectory: a degraded image is progressively restored as <em>t</em> evolves from 0→1, with PSNR monotonically improving from 20.93 to 30.43 dB.
@@ -594,32 +638,28 @@
     <h2>Three-Stage Framework</h2>
     <div class="section-divider"></div>
 
-    <div class="method-layout">
-      <div>
-        <div class="method-img-wrap">
-          <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/figure.png" alt="SLAIR Framework Overview">
-        </div>
-        <p class="fig-caption method-side-caption">
-          <strong style="color:var(--text)">Fig. 2</strong> — SLAIR pipeline: degraded images are encoded into latent space, transported deterministically through flow matching, and decoded with wavelet-based high-frequency refinement.
-        </p>
-      </div>
+    <div class="method-img-wrap">
+      <img src="image/method-cropped.png" alt="SLAIR three-stage framework">
+    </div>
+    <p class="fig-caption method-side-caption">
+      <strong style="color:var(--text)">Fig. 2</strong> - SLAIR first structures degraded and clean latents, then learns deterministic ODE transport with flow matching, and finally restores high-frequency details through a wavelet-aware VAE decoder.
+    </p>
 
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon blue">1</div>
-          <h4>Latent Space Separation</h4>
-          <p>We fine-tune the VAE with a contrastive classification loss to maximize inter-manifold distance between degraded and clean latents. This structured geometry simplifies transport dynamics and stabilizes training.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon purple">2</div>
-          <h4>Deterministic Flow Matching</h4>
-          <p>A LightningDiT-based velocity field learns continuous ODE transport from z<sub>deg</sub> to z<sub>gt</sub>. No degradation labels needed, no stochastic sampling; just a single deterministic ODE solve at inference.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon amber">3</div>
-          <h4>High-Frequency Refinement</h4>
-          <p>A DWT-based fusion block in the VAE decoder injects restored high-frequency details before final decoding, eliminating latent-to-pixel distortion and enabling arbitrary-resolution inference.</p>
-        </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon blue">1</div>
+        <h4>Degradation-Aware Latent Separation</h4>
+        <p>The paper shows that original VAE latents entangle degraded and clean samples, making the transport direction ambiguous. SLAIR fine-tunes the VAE with binary and degradation-subtype classification losses, enlarging the margin between <em>z</em><sub>deg</sub> and <em>z</em><sub>gt</sub> while preserving reconstruction quality.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple">2</div>
+        <h4>Deterministic Conditional Transport</h4>
+        <p>Instead of estimating degradation labels or sampling from random noise, SLAIR learns a conditional velocity field in latent space. A LightningDiT backbone solves the ODE from degraded latents to clean latents, yielding a stable degradation-agnostic restoration path.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon amber">3</div>
+        <h4>High-Frequency Details Refinement</h4>
+        <p>Latent restoration can lose fine structures during decoding. SLAIR injects pyramid VAE encoder features through fusion blocks and constrains the decoder with a DWT high-frequency loss, recovering sharp edges while suppressing reintroduced rain, moire, haze, and other artifacts.</p>
       </div>
     </div>
   </div>
@@ -634,6 +674,12 @@
       <div class="section-divider"></div>
       <p>SLAIR is evaluated under two paper settings: <strong style="color:var(--text)">Setting (i)</strong> is the comprehensive benchmark over Rain1400, Outdoor-Rain, Raindrop, UHDSnow, SOTS, BSD68, LoL, UHDM, and HDR-Eye; <strong style="color:var(--text)">Setting (ii)</strong> is the standard 5-task all-in-one benchmark over BSD68, GoPro, LoL, Rain100L, and SOTS.</p>
 
+      <p class="table-title"><strong style="color:var(--text)">Unified benchmark table</strong> - Setting (i) and Setting (ii) are combined into one horizontally scrollable table. Best values are <strong>bold</strong>; second-best values are <u>underlined</u>.</p>
+      <div class="table-wrap">
+        <table class="combined-table" id="combinedScoreTable"></table>
+      </div>
+
+      <div id="legacyTables" hidden>
       <p class="table-title"><strong style="color:var(--text)">Table 1: Setting (i), comprehensive benchmark</strong> - values are PSNR↑ / SSIM↑ / LPIPS↓ / FID↓ from the paper.</p>
       <p class="table-subtitle">Rain1400, Outdoor-Rain, Raindrop, UHDSnow, SOTS</p>
       <div class="table-wrap">
@@ -715,13 +761,14 @@
           </tbody>
         </table>
       </div>
+      </div>
     </div>
     <div class="visual-results">
       <div class="visual-copy">
         <div class="section-label">Qualitative Results</div>
         <h2>Setting (i) Visual Results</h2>
         <div class="section-divider"></div>
-        <p>Use the tabs to switch between all Setting (i) test sets. All visual results are loaded from the local image folder.</p>
+        <p>Use the tabs to switch among Setting (i) test sets. The full method strip includes degraded input, competing all-in-one methods, SLAIR, and ground truth from the local image folder.</p>
       </div>
 
       <!-- Task tabs -->
@@ -767,21 +814,8 @@
       Drag the divider left or right to compare
     </p>
 
-    <!-- All three side by side -->
-    <div class="gallery-grid mt-2" id="galleryGrid">
-      <div class="gallery-cell">
-        <img id="galleryInput" src="" alt="Degraded input">
-        <div class="gallery-cell-label" style="color:#f87171;">Degraded</div>
-      </div>
-      <div class="gallery-cell">
-        <img id="galleryOurs" src="" alt="Our result">
-        <div class="gallery-cell-label" style="color:var(--accent);">Ours (SLAIR)</div>
-      </div>
-      <div class="gallery-cell">
-        <img id="galleryGT" src="" alt="Ground truth">
-        <div class="gallery-cell-label" style="color:#4ade80;">Ground Truth</div>
-      </div>
-    </div>
+    <div class="method-gallery mt-2" id="methodGallery"></div>
+    <p class="gallery-note">Scroll horizontally to compare AirNet, PromptIR, DA-CLIP, AdaIR, DCPT, MoCE-IR, VLU-Net, SLAIR, and GT on the selected task.</p>
     </div>
   </div>
 </section>
@@ -838,9 +872,20 @@ const sliderDivider   = document.getElementById('sliderDivider');
 const sliderHandle    = document.getElementById('sliderHandle');
 const labelLeft       = document.getElementById('labelLeft');
 const labelRight      = document.getElementById('labelRight');
-const galleryInput    = document.getElementById('galleryInput');
-const galleryOurs     = document.getElementById('galleryOurs');
-const galleryGT       = document.getElementById('galleryGT');
+const methodGallery   = document.getElementById('methodGallery');
+
+const galleryMethods = [
+  { label: 'Degraded', file: 'input_stitched', tone: '#ef4444' },
+  { label: 'AirNet', file: 'AirNet_stitched' },
+  { label: 'PromptIR', file: 'PromptIR_stitched' },
+  { label: 'DA-CLIP', file: 'DA-CLIP_stitched' },
+  { label: 'AdaIR', file: 'AdaIR_stitched' },
+  { label: 'DCPT', file: 'DCPT_stitched' },
+  { label: 'MoCE-IR', file: 'MoCE-IR_stitched' },
+  { label: 'VLU-Net', file: 'VLU-Net_stitched' },
+  { label: 'SLAIR', file: 'Ours_stitched', ours: true },
+  { label: 'GT', file: 'gt_stitched', tone: '#16a34a' },
+];
 
 function imgUrl(task, type) {
   // type: 'input_stitched' | 'Ours_stitched' | 'gt_stitched'
@@ -849,17 +894,21 @@ function imgUrl(task, type) {
 
 function loadTask(task) {
   currentTask = task;
-  const deg  = imgUrl(task, 'input_stitched');
-  const ours = imgUrl(task, 'Ours_stitched');
-  const gt   = imgUrl(task, 'gt_stitched');
-
-  // Gallery
-  galleryInput.src = deg;
-  galleryOurs.src  = ours;
-  galleryGT.src    = gt;
-
-  // Slider
+  renderMethodGallery(task);
   applySliderMode();
+}
+
+function renderMethodGallery(task) {
+  methodGallery.innerHTML = galleryMethods.map(method => {
+    const cls = method.ours ? 'gallery-cell ours' : 'gallery-cell';
+    const style = method.tone ? ` style="color:${method.tone};"` : '';
+    return `
+      <div class="${cls}">
+        <img src="${imgUrl(task, method.file)}" alt="${tasks[task].label} - ${method.label}" loading="lazy">
+        <div class="gallery-cell-label"${style}><span>${method.label}</span></div>
+      </div>
+    `;
+  }).join('');
 }
 
 function applySliderMode() {
@@ -937,6 +986,69 @@ function copyBib() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+function buildCombinedTable() {
+  const target = document.getElementById('combinedScoreTable');
+  const sources = Array.from(document.querySelectorAll('#legacyTables table'));
+  const bands = [
+    'Setting (i): Rain1400, Outdoor-Rain, Raindrop, UHDSnow, SOTS',
+    'Setting (i): BSD68, LoL, UHDM, HDR-Eye, Average',
+    'Setting (ii): BSD68, GoPro, LoL',
+    'Setting (ii): Rain100L, SOTS, Average',
+  ];
+
+  sources.forEach((source, index) => {
+    const bandBody = document.createElement('tbody');
+    bandBody.className = 'score-band';
+    const band = document.createElement('tr');
+    const bandCell = document.createElement('th');
+    bandCell.className = 'setting-band';
+    bandCell.colSpan = 80;
+    bandCell.textContent = bands[index];
+    band.appendChild(bandCell);
+    bandBody.appendChild(band);
+    target.appendChild(bandBody);
+
+    const headBody = document.createElement('tbody');
+    headBody.className = 'score-head';
+    Array.from(source.tHead.rows).forEach(row => {
+      headBody.appendChild(row.cloneNode(true));
+    });
+    target.appendChild(headBody);
+
+    const body = document.createElement('tbody');
+    body.className = 'score-group';
+    Array.from(source.tBodies[0].rows).forEach(row => {
+      const cloned = row.cloneNode(true);
+      cloned.classList.add('score-row');
+      body.appendChild(cloned);
+    });
+    target.appendChild(body);
+  });
+}
+
+function highlightMetricRanks() {
+  document.querySelectorAll('#combinedScoreTable tbody.score-group').forEach(group => {
+    const rows = Array.from(group.querySelectorAll('tr.score-row'));
+    const maxCells = Math.max(...rows.map(row => row.cells.length));
+
+    for (let col = 1; col < maxCells; col++) {
+      const metricIndex = (col - 1) % 4;
+      const higherIsBetter = metricIndex === 0 || metricIndex === 1;
+      const values = rows.map(row => {
+        const cell = row.cells[col];
+        const value = cell ? Number.parseFloat(cell.textContent.replace(/[^\d.-]/g, '')) : Number.NaN;
+        return { cell, value };
+      }).filter(item => item.cell && Number.isFinite(item.value));
+
+      values.sort((a, b) => higherIsBetter ? b.value - a.value : a.value - b.value);
+      if (values[0]) values[0].cell.classList.add('best');
+      if (values[1]) values[1].cell.classList.add('second');
+    }
+  });
+}
+
+buildCombinedTable();
+highlightMetricRanks();
 loadTask('Rain1400');
 </script>
 </body>
