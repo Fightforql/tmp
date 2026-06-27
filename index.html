@@ -75,10 +75,7 @@ p{color:var(--muted);font-size:.96rem;margin-bottom:1rem}
 .abstract-card p{font-size:.99rem;line-height:1.88;color:var(--muted);margin:0}
 .abstract-card strong{color:var(--text);font-weight:600}
 
-/* TEASER */
-#teaser{background:var(--bg);padding:56px 2rem 0}
-.teaser-wrap{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);box-shadow:0 16px 48px rgba(15,23,42,.09);background:#fff;padding:1.2rem}
-.teaser-wrap img{width:100%;display:block}
+
 
 /* ── METHOD – three vertical stage blocks ── */
 #method{background:var(--bg2)}
@@ -264,18 +261,7 @@ footer a:hover{color:var(--text)}
   </div>
 </header>
 
-<!-- TEASER -->
-<section id="teaser" style="background:var(--bg);padding:56px 2rem 0">
-  <div class="container">
-    <div class="teaser-wrap">
-      <img src="image/teaser.png" alt="SLAIR Teaser">
-    </div>
-    <p class="fig-caption">
-      <strong>Fig. 1</strong> — (a) t-SNE visualization: our Degradation VAE cleanly separates 10 degradation types in latent space, versus the entangled vanilla VAE.
-      (b) ODE trajectory: PSNR improves monotonically from 20.93 to 30.43 dB as <em>t</em> evolves from 0 → 1.
-    </p>
-  </div>
-</section>
+
 
 <!-- ABSTRACT -->
 <section id="abstract">
@@ -582,7 +568,6 @@ footer a:hover{color:var(--text)}
 </footer>
 
 <script>
-const BASE = 'image/';
 // slider state per panel
 const state = {
   '1': { task: 'Rain1400' },
@@ -590,40 +575,69 @@ const state = {
 };
 
 // gallery rows
-const row1 = [
-  { label:'Degraded', file:'input_stitched',  lc:'deg' },
-  { label:'AirNet',   file:'AirNet_stitched', lc:'' },
+// Setting (i): 6+6 cols, row2 starts with Degraded repeat
+const s1row1 = [
+  { label:'Degraded', file:'input_stitched',   lc:'deg' },
+  { label:'AirNet',   file:'AirNet_stitched',  lc:'' },
   { label:'PromptIR', file:'PromptIR_stitched',lc:'' },
-  { label:'DA-CLIP',  file:'DA-CLIP_stitched',lc:'' },
-  { label:'AdaIR',    file:'AdaIR_stitched',  lc:'' },
-  { label:'DCPT',     file:'DCPT_stitched',   lc:'' },
+  { label:'DA-CLIP',  file:'DA-CLIP_stitched', lc:'' },
+  { label:'AdaIR',    file:'AdaIR_stitched',   lc:'' },
+  { label:'DCPT',     file:'DCPT_stitched',    lc:'' },
 ];
-const row2 = [
-  { label:'Degraded', file:'input_stitched',  lc:'deg' },
-  { label:'MoCE-IR',  file:'MoCE-IR_stitched',lc:'' },
-  { label:'VLU-Net',  file:'VLU-Net_stitched',lc:'' },
-  { label:'DiffUIR',  file:'DiffUIR_stitched',lc:'' },
-  { label:'SLAIR',    file:'Ours_stitched',   lc:'ours', cc:'ours' },
-  { label:'GT',       file:'gt_stitched',     lc:'gt' },
+const s1row2 = [
+  { label:'Degraded', file:'input_stitched',   lc:'deg' },
+  { label:'MoCE-IR',  file:'MoCE-IR_stitched', lc:'' },
+  { label:'VLU-Net',  file:'VLU-Net_stitched', lc:'' },
+  { label:'DiffUIR',  file:'DiffUIR_stitched', lc:'' },
+  { label:'SLAIR',    file:'Ours_stitched',    lc:'ours', cc:'ours' },
+  { label:'GT',       file:'gt_stitched',      lc:'gt' },
 ];
 
-function imgUrl(task, file) { return `${BASE}${task}/${file}.png`; }
+// Setting (ii): no DA-CLIP, no repeated Degraded in row2 → 5+5 cols
+const s2row1 = [
+  { label:'Degraded', file:'input_stitched',   lc:'deg' },
+  { label:'AirNet',   file:'AirNet_stitched',  lc:'' },
+  { label:'PromptIR', file:'PromptIR_stitched',lc:'' },
+  { label:'AdaIR',    file:'AdaIR_stitched',   lc:'' },
+  { label:'DCPT',     file:'DCPT_stitched',    lc:'' },
+];
+const s2row2 = [
+  { label:'MoCE-IR',  file:'MoCE-IR_stitched', lc:'' },
+  { label:'VLU-Net',  file:'VLU-Net_stitched', lc:'' },
+  { label:'DiffUIR',  file:'DiffUIR_stitched', lc:'' },
+  { label:'SLAIR',    file:'Ours_stitched',    lc:'ours', cc:'ours' },
+  { label:'GT',       file:'gt_stitched',      lc:'gt' },
+];
+
+function imgUrl(task, file, sid) {
+  const base = sid === '2' ? '5-task' : task;
+  return `image/${base}/${file}.png`;
+}
 
 function renderGallery(sid, task) {
+  const r1 = sid === '2' ? s2row1 : s1row1;
+  const r2 = sid === '2' ? s2row2 : s1row2;
+  const cols = r1.length; // 5 for s2, 6 for s1
+
   function renderRow(gridId, labId, methods) {
     const g = document.getElementById(gridId);
     const l = document.getElementById(labId);
+    g.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+    l.style.gridTemplateColumns = `repeat(${cols},1fr)`;
     g.innerHTML = methods.map(m =>
-      `<div class="g-cell ${m.cc||''}"><img src="${imgUrl(task,m.file)}" alt="${m.label}" loading="lazy"></div>`
+      `<div class="g-cell ${m.cc||''}"><img src="${imgUrl(task,m.file,sid)}" alt="${m.label}" loading="lazy"></div>`
     ).join('');
     l.innerHTML = methods.map(m =>
       `<div class="g-lbl ${m.lc}">${m.label}</div>`
     ).join('');
   }
-  renderRow(`gr${sid}a`, `gl${sid}a`, row1);
-  renderRow(`gr${sid}b`, `gl${sid}b`, row2);
-  document.getElementById(`gc${sid}`).innerHTML =
-    `<strong>All-method comparison.</strong> Row 1: Degraded · AirNet · PromptIR · DA-CLIP · AdaIR · DCPT. Row 2: Degraded · MoCE-IR · VLU-Net · DiffUIR · <strong style="color:var(--accent)">SLAIR (Ours)</strong> · GT.`;
+  renderRow(`gr${sid}a`, `gl${sid}a`, r1);
+  renderRow(`gr${sid}b`, `gl${sid}b`, r2);
+
+  const caption = sid === '2'
+    ? `<strong>All-method comparison.</strong> Row 1: Degraded · AirNet · PromptIR · AdaIR · DCPT. Row 2: MoCE-IR · VLU-Net · DiffUIR · <strong style="color:var(--accent)">SLAIR (Ours)</strong> · GT.`
+    : `<strong>All-method comparison.</strong> Row 1: Degraded · AirNet · PromptIR · DA-CLIP · AdaIR · DCPT. Row 2: Degraded · MoCE-IR · VLU-Net · DiffUIR · <strong style="color:var(--accent)">SLAIR (Ours)</strong> · GT.`;
+  document.getElementById(`gc${sid}`).innerHTML = caption;
 }
 
 function setSliderPos(sid, frac) {
@@ -645,8 +659,8 @@ function applySlider(sid) {
   const ov   = document.getElementById(`soi${sid}`);
   const ll   = document.getElementById(`ll${sid}`);
   const lr   = document.getElementById(`lr${sid}`);
-  base.src = imgUrl(task,'Ours_stitched');
-  ov.src   = imgUrl(task,'input_stitched');
+  base.src = imgUrl(task,'Ours_stitched',sid);
+  ov.src   = imgUrl(task,'input_stitched',sid);
   ll.textContent='Degraded'; lr.textContent='Ours';
   ll.style.color='#fca5a5'; lr.style.color='#93c5fd';
   setSliderPos(sid, .5);
