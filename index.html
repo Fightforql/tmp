@@ -11,17 +11,17 @@
   /* ── Reset & base ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg:        #0b0f1a;
-    --bg2:       #111827;
-    --bg3:       #1a2235;
-    --border:    rgba(255,255,255,0.07);
-    --accent:    #5b8fff;
-    --accent2:   #a78bfa;
-    --amber:     #f59e0b;
-    --text:      #e2e8f0;
-    --muted:     #94a3b8;
+    --bg:        #f8fafc;
+    --bg2:       #ffffff;
+    --bg3:       #eef2f7;
+    --border:    rgba(15,23,42,0.12);
+    --accent:    #2563eb;
+    --accent2:   #7c3aed;
+    --amber:     #d97706;
+    --text:      #111827;
+    --muted:     #475569;
     --dim:       #64748b;
-    --card-bg:   rgba(255,255,255,0.03);
+    --card-bg:   rgba(255,255,255,0.78);
     --r:         14px;
   }
   html { scroll-behavior: smooth; }
@@ -36,7 +36,7 @@
   /* ── Nav ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(11,15,26,0.85);
+    background: rgba(255,255,255,0.86);
     backdrop-filter: blur(18px);
     border-bottom: 1px solid var(--border);
     padding: 0 2rem;
@@ -73,8 +73,8 @@
   .hero-glow {
     position: absolute; inset: 0; pointer-events: none;
     background:
-      radial-gradient(ellipse 60% 50% at 30% 20%, rgba(91,143,255,0.12) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 40% at 70% 70%, rgba(167,139,250,0.10) 0%, transparent 70%);
+      linear-gradient(180deg, rgba(37,99,235,0.08) 0%, rgba(248,250,252,0) 56%),
+      radial-gradient(ellipse 50% 36% at 78% 24%, rgba(217,119,6,0.10) 0%, transparent 68%);
   }
   .hero-inner { position: relative; max-width: 860px; }
   .venue-badge {
@@ -98,7 +98,7 @@
     line-height: 1.18;
     letter-spacing: -0.02em;
     margin-bottom: 1.6rem;
-    background: linear-gradient(135deg, #e2e8f0 0%, #a78bfa 50%, #5b8fff 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #2563eb 54%, #7c3aed 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -109,7 +109,7 @@
     margin-bottom: 0.6rem;
     line-height: 1.9;
   }
-  .authors a { color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.15); transition: border-color 0.2s; }
+  .authors a { color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(37,99,235,0.22); transition: border-color 0.2s; }
   .authors a:hover { border-color: var(--accent); }
   .authors sup { color: var(--accent); font-size: 0.7em; }
   .affiliations {
@@ -141,7 +141,7 @@
     border: 1.5px solid var(--border);
     color: var(--text);
   }
-  .btn-outline:hover { border-color: rgba(255,255,255,0.25); background: var(--card-bg); }
+  .btn-outline:hover { border-color: rgba(37,99,235,0.35); background: var(--card-bg); }
   .btn-ghost {
     background: rgba(167,139,250,0.1);
     border: 1.5px solid rgba(167,139,250,0.25);
@@ -187,7 +187,7 @@
     position: absolute; top: 0; left: 0; right: 0; height: 2px;
     background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
   }
-  .abstract-card p { font-size: 1rem; line-height: 1.85; color: #cbd5e1; margin: 0; }
+  .abstract-card p { font-size: 1rem; line-height: 1.85; color: var(--muted); margin: 0; }
   .abstract-card strong { color: var(--text); font-weight: 600; }
 
   /* ── Teaser ── */
@@ -196,7 +196,7 @@
     border-radius: var(--r);
     overflow: hidden;
     border: 1px solid var(--border);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    box-shadow: 0 18px 48px rgba(15,23,42,0.12);
   }
   .teaser-img-wrap img { width: 100%; display: block; }
   .fig-caption {
@@ -209,13 +209,14 @@
 
   /* ── Method ── */
   #method { background: var(--bg2); }
+  .method-container { max-width: 1280px; }
   .method-img-wrap {
     border-radius: var(--r);
     overflow: hidden;
     border: 1px solid var(--border);
     background: white;
-    padding: 1.5rem;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    padding: 0.8rem;
+    box-shadow: 0 18px 48px rgba(15,23,42,0.12);
     margin-bottom: 1rem;
   }
   .method-img-wrap img { width: 100%; display: block; }
@@ -246,6 +247,8 @@
 
   /* ── Results / Slider ── */
   #results { padding: 90px 2rem; }
+  .visual-results { margin-top: 3.2rem; }
+  .visual-copy { display: block; }
   .task-tabs {
     display: flex; flex-wrap: wrap; gap: 0.5rem;
     margin-bottom: 2rem;
@@ -276,7 +279,7 @@
     margin: 0 auto;
     border-radius: var(--r);
     overflow: hidden;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 54px rgba(15,23,42,0.16);
     border: 1px solid var(--border);
     user-select: none;
     cursor: ew-resize;
@@ -365,7 +368,8 @@
   }
 
   /* ── Quantitative ── */
-  #quantitative { background: var(--bg2); }
+  #quantitative { scroll-margin-top: 72px; }
+  .benchmark-block { margin-bottom: 3rem; }
   .metrics-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -393,6 +397,8 @@
     overflow-x: auto;
     border: 1px solid var(--border);
     border-radius: var(--r);
+    background: var(--bg2);
+    margin-bottom: 2.2rem;
   }
   table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 700px; }
   th {
@@ -410,7 +416,7 @@
   td {
     padding: 0.65rem 1rem;
     text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(15,23,42,0.07);
     color: var(--muted);
     white-space: nowrap;
   }
@@ -430,13 +436,13 @@
     padding: 1.5rem 2rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.82rem;
-    color: #94a3b8;
+    color: var(--muted);
     line-height: 1.8;
     position: relative;
     overflow: hidden;
   }
   .bib-block .key { color: var(--accent); }
-  .bib-block .val { color: #a5f3fc; }
+  .bib-block .val { color: #0369a1; }
   .bib-block .brace { color: var(--accent2); }
   .copy-btn {
     position: absolute; top: 1rem; right: 1rem;
@@ -557,7 +563,7 @@
 
 <!-- ── Method ── -->
 <section id="method">
-  <div class="container">
+  <div class="container method-container">
     <div class="section-label">Method</div>
     <h2>Three-Stage Framework</h2>
     <div class="section-divider"></div>
@@ -586,47 +592,104 @@
         <p>A DWT-based fusion block in the VAE decoder injects restored high-frequency details before final decoding, eliminating latent-to-pixel distortion and enabling arbitrary-resolution inference.</p>
       </div>
     </div>
-
-    <!-- HRM figure -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem;">
-      <div>
-        <div class="method-img-wrap" style="padding:1rem;">
-          <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/fusion-results.png" alt="High-frequency refinement ablation">
-        </div>
-        <p class="fig-caption"><strong style="color:var(--text)">Fig. 3</strong> — High-freq refinement ablation on demoiréing. Direct L2 fusion blurs texture; our wavelet fusion cleanly recovers fine patterns.</p>
-      </div>
-      <div>
-        <div class="method-img-wrap" style="padding:1rem; background: var(--bg3);">
-          <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/HRM1.png" alt="HRM module detail">
-        </div>
-        <p class="fig-caption"><strong style="color:var(--text)">Fig. 4</strong> — High-Frequency Refinement Module architecture: ODE Solver output fused via DWT-based Fusion Block with VAE decoder features.</p>
-      </div>
-    </div>
   </div>
 </section>
 
 <!-- ── Qualitative Results ── -->
 <section id="results" style="background:var(--bg);">
   <div class="container">
-    <div class="section-label">Qualitative Results</div>
-    <h2>Drag to Compare — Degraded vs. Ours vs. GT</h2>
-    <div class="section-divider"></div>
-    <p>SLAIR handles 8 diverse restoration tasks in a single unified model. Use the tabs to switch between tasks, and drag the slider to compare degraded input with our restored output.</p>
+    <div id="quantitative" class="benchmark-block">
+      <div class="section-label">Quantitative Benchmarks</div>
+      <h2>State-of-the-Art on 5-Task & 8-Task Benchmarks</h2>
+      <div class="section-divider"></div>
+      <p>SLAIR is evaluated under two settings: <strong style="color:var(--text)">Setting (i)</strong> covers the comprehensive 8-task benchmark, while <strong style="color:var(--text)">Setting (ii)</strong> follows the standard 5-task all-in-one benchmark. Metrics: PSNR↑ / SSIM↑ / LPIPS↓ / FID↓.</p>
 
-    <!-- Task tabs -->
-    <div class="task-tabs" id="taskTabs">
-      <button class="tab-btn active" data-task="Rain1400" onclick="switchTask(this)">Rain1400</button>
-      <button class="tab-btn" data-task="Outdoor-Rain" onclick="switchTask(this)">Outdoor-Rain</button>
-      <button class="tab-btn" data-task="Raindrop" onclick="switchTask(this)">Raindrop</button>
-      <button class="tab-btn" data-task="UHDSnow" onclick="switchTask(this)">UHDSnow</button>
-      <button class="tab-btn" data-task="SOTS" onclick="switchTask(this)">SOTS (Haze)</button>
-      <button class="tab-btn" data-task="CBSD68" onclick="switchTask(this)">BSD68 (Noise)</button>
-      <button class="tab-btn" data-task="LoL" onclick="switchTask(this)">LoL (Low-light)</button>
-      <button class="tab-btn" data-task="UHDM" onclick="switchTask(this)">UHDM (Moire)</button>
-      <button class="tab-btn" data-task="HDR-Eye" onclick="switchTask(this)">HDR-Eye</button>
+      <div class="metrics-row mt-2">
+        <div class="metric-card">
+          <div class="metric-num">+5.6%</div>
+          <div class="metric-label">Avg PSNR gain vs. top baselines</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">-3%</div>
+          <div class="metric-label">LPIPS reduction (perceptual)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">8 Tasks</div>
+          <div class="metric-label">Handled by single unified model</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">31.05</div>
+          <div class="metric-label">Avg FID on Setting (ii)</div>
+        </div>
+      </div>
+
+      <p style="margin-bottom:0.8rem; font-size:0.88rem;"><strong style="color:var(--text)">Table 1: Benchmark settings</strong> — both evaluation settings used in the paper.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left; min-width:120px;">Setting</th>
+              <th>Tasks</th>
+              <th># Tasks</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="method-col">Setting (i)</td>
+              <td>Rain1400, Outdoor-Rain, Raindrop, UHDSnow, BSD68, LoL, UHDM, HDR-Eye</td>
+              <td>8</td>
+              <td>Comprehensive all-in-one restoration benchmark</td>
+            </tr>
+            <tr class="ours-row">
+              <td class="method-col">Setting (ii)</td>
+              <td>BSD68, GoPro, LoL, Rain100L, SOTS</td>
+              <td>5</td>
+              <td>Standard 5-task all-in-one benchmark</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-bottom:0.8rem; font-size:0.88rem;"><strong style="color:var(--text)">Table 2: Setting (ii) average performance</strong> — average over BSD68, GoPro, LoL, Rain100L, and SOTS. <span style="color:var(--text); font-weight:600;">Bold</span> = best, <span style="color:var(--accent2); text-decoration:underline;">underline</span> = second best.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left; min-width:120px;">Method</th>
+              <th>PSNR↑</th>
+              <th>SSIM↑</th>
+              <th>LPIPS↓</th>
+              <th>FID↓</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="method-col">AirNet</td><td>25.67</td><td>.786</td><td>.237</td><td>58.91</td></tr>
+            <tr><td class="method-col">PromptIR</td><td>26.25</td><td>.771</td><td>.238</td><td>54.22</td></tr>
+            <tr><td class="method-col">AdaIR</td><td>26.11</td><td>.777</td><td>.236</td><td>59.22</td></tr>
+            <tr><td class="method-col">MoCE-IR</td><td class="second">28.52</td><td class="second">.834</td><td class="second">.185</td><td class="second">52.18</td></tr>
+            <tr><td class="method-col">DiffUIR</td><td>25.35</td><td>.817</td><td>.206</td><td>61.36</td></tr>
+            <tr class="ours-row"><td class="method-col">SLAIR (Ours)</td><td class="best">28.39</td><td class="best">.882</td><td class="best">.094</td><td class="best">31.05</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Slider mode toggle: degraded vs ours, or ours vs gt -->
+    <div class="visual-results">
+      <div class="visual-copy">
+        <div class="section-label">Qualitative Results</div>
+        <h2>Setting (ii) Visual Results</h2>
+        <div class="section-divider"></div>
+        <p>Use the tabs to switch between available Setting (ii) examples, and drag the slider to compare degraded input with our restored output.</p>
+      </div>
+
+      <!-- Task tabs -->
+      <div class="task-tabs" id="taskTabs">
+        <button class="tab-btn active" data-task="CBSD68" onclick="switchTask(this)">BSD68 (Noise)</button>
+        <button class="tab-btn" data-task="SOTS" onclick="switchTask(this)">SOTS (Haze)</button>
+        <button class="tab-btn" data-task="LoL" onclick="switchTask(this)">LoL (Low-light)</button>
+      </div>
+      <!-- Slider mode toggle: degraded vs ours, or ours vs gt -->
     <div class="three-toggle">
       <button class="three-btn active" id="modeLeft" onclick="setSliderMode('deg-ours')">Degraded ↔ Ours</button>
       <button class="three-btn" id="modeRight" onclick="setSliderMode('ours-gt')">Ours ↔ GT</button>
@@ -672,117 +735,6 @@
         <div class="gallery-cell-label" style="color:#4ade80;">Ground Truth</div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ── Quantitative ── -->
-<section id="quantitative">
-  <div class="container">
-    <div class="section-label">Quantitative Benchmarks</div>
-    <h2>State-of-the-Art on 5-Task & 8-Task Benchmarks</h2>
-    <div class="section-divider"></div>
-    <p>SLAIR is evaluated on two settings: <strong style="color:var(--text)">Setting (i)</strong> — comprehensive 8-task benchmark (Rain1400, Outdoor-Rain, Raindrop, UHDSnow, BSD68, LoL, UHDM, HDR-Eye) and <strong style="color:var(--text)">Setting (ii)</strong> — standard 5-task benchmark. Metrics: PSNR↑ / SSIM↑ / LPIPS↓ / FID↓.</p>
-
-    <!-- Key numbers -->
-    <div class="metrics-row mt-2">
-      <div class="metric-card">
-        <div class="metric-num">+5.6%</div>
-        <div class="metric-label">Avg PSNR gain vs. top baselines</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-num">−33%</div>
-        <div class="metric-label">LPIPS reduction (perceptual)</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-num">8 Tasks</div>
-        <div class="metric-label">Handled by single unified model</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-num">31.05</div>
-        <div class="metric-label">Avg FID — best among all methods</div>
-      </div>
-    </div>
-
-    <!-- Table: 5-task benchmark (Setting ii) -->
-    <p style="margin-bottom:0.8rem; font-size:0.88rem;"><strong style="color:var(--text)">Table: Standard 5-task all-in-one benchmark</strong> — BSD68, GoPro, LoL, Rain100L, SOTS. <span style="color:var(--text); font-weight:600;">Bold</span> = best, <span style="color:var(--accent2); text-decoration:underline;">underline</span> = second best.</p>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th rowspan="2" style="text-align:left; min-width:100px;">Method</th>
-            <th colspan="4" class="task-header">BSD68</th>
-            <th colspan="4" class="task-header">GoPro</th>
-            <th colspan="4" class="task-header">LoL</th>
-            <th colspan="4" class="task-header">Rain100L</th>
-            <th colspan="4" class="task-header">SOTS</th>
-            <th colspan="4" class="task-header">Average</th>
-          </tr>
-          <tr>
-            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
-            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
-            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
-            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
-            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
-            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="method-col">AirNet</td>
-            <td>26.17</td><td>.636</td><td>.429</td><td>74.70</td>
-            <td>22.85</td><td>.766</td><td>.275</td><td>60.57</td>
-            <td>24.01</td><td>.720</td><td>.278</td><td>97.91</td>
-            <td>28.76</td><td>.881</td><td>.147</td><td>41.40</td>
-            <td>26.57</td><td>.925</td><td>.056</td><td>19.97</td>
-            <td>25.67</td><td>.786</td><td>.237</td><td>58.91</td>
-          </tr>
-          <tr>
-            <td class="method-col">PromptIR</td>
-            <td>22.32</td><td>.445</td><td>.564</td><td>83.77</td>
-            <td>22.65</td><td>.763</td><td>.276</td><td>59.29</td>
-            <td>25.23</td><td>.771</td><td>.228</td><td>97.15</td>
-            <td>32.16</td><td>.902</td><td>.105</td><td>26.64</td>
-            <td>28.90</td><td>.974</td><td>.016</td><td>4.26</td>
-            <td>26.25</td><td>.771</td><td>.238</td><td>54.22</td>
-          </tr>
-          <tr>
-            <td class="method-col">AdaIR</td>
-            <td>23.04</td><td>.478</td><td>.546</td><td>83.58</td>
-            <td>28.98</td><td>.878</td><td>.161</td><td>28.23</td>
-            <td>22.14</td><td>.734</td><td>.256</td><td>102.82</td>
-            <td>28.85</td><td>.858</td><td>.177</td><td>70.13</td>
-            <td>27.56</td><td>.939</td><td>.041</td><td>11.36</td>
-            <td>26.11</td><td>.777</td><td>.236</td><td>59.22</td>
-          </tr>
-          <tr>
-            <td class="method-col">MoCE-IR</td>
-            <td>25.31</td><td>.587</td><td>.456</td><td>76.79</td>
-            <td class="second">30.46</td><td class="second">.907</td><td class="second">.125</td><td class="second">22.36</td>
-            <td class="second">27.50</td><td class="second">.836</td><td>.169</td><td>96.04</td>
-            <td>29.26</td><td>.863</td><td>.160</td><td>61.48</td>
-            <td class="second">30.08</td><td class="second">.975</td><td class="second">.014</td><td class="second">4.22</td>
-            <td class="second">28.52</td><td class="second">.834</td><td class="second">.185</td><td class="second">52.18</td>
-          </tr>
-          <tr>
-            <td class="method-col">DiffUIR</td>
-            <td>20.41</td><td>.558</td><td>.473</td><td>86.91</td>
-            <td>27.62</td><td>.844</td><td>.201</td><td>40.99</td>
-            <td>19.35</td><td>.809</td><td>.180</td><td>89.85</td>
-            <td>28.26</td><td>.898</td><td>.165</td><td>79.52</td>
-            <td class="best">31.11</td><td class="best">.976</td><td class="best">.011</td><td>9.53</td>
-            <td>25.35</td><td>.817</td><td>.206</td><td>61.36</td>
-          </tr>
-          <tr class="ours-row">
-            <td class="method-col">SLAIR (Ours)</td>
-            <td class="best">29.21</td><td class="best">.846</td><td class="best">.139</td><td class="best">39.99</td>
-            <td>25.91</td><td>.796</td><td>.153</td><td>32.87</td>
-            <td class="best">29.13</td><td class="best">.883</td><td class="best">.083</td><td class="best">45.75</td>
-            <td class="second">31.01</td><td class="best">.943</td><td class="best">.060</td><td class="second">28.89</td>
-            <td>26.67</td><td>.942</td><td>.033</td><td class="best">7.76</td>
-            <td class="best">28.39</td><td class="best">.882</td><td class="best">.094</td><td class="best">31.05</td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </section>
@@ -815,19 +767,13 @@
 // ── Image assets ──────────────────────────────────────────────────────────────
 const BASE = 'https://raw.githubusercontent.com/Fightforql/tmp/main/image/';
 const tasks = {
-  'Rain1400':     { label: 'Deraining (Rain1400)' },
-  'Outdoor-Rain': { label: 'Deraining (Outdoor-Rain)' },
-  'Raindrop':     { label: 'Raindrop Removal' },
-  'UHDSnow':      { label: 'Snow Removal (UHDSnow)' },
-  'SOTS':         { label: 'Dehazing (SOTS)' },
   'CBSD68':       { label: 'Denoising (BSD68)' },
+  'SOTS':         { label: 'Dehazing (SOTS)' },
   'LoL':          { label: 'Low-light Enhancement (LoL)' },
-  'UHDM':         { label: 'Demoiréing (UHDM)' },
-  'HDR-Eye':      { label: 'HDR Reconstruction (HDR-Eye)' },
 };
 
 // ── Slider state ──────────────────────────────────────────────────────────────
-let currentTask = 'Rain1400';
+let currentTask = 'CBSD68';
 let sliderMode  = 'deg-ours'; // 'deg-ours' | 'ours-gt'
 let dragging    = false;
 
@@ -938,7 +884,7 @@ function copyBib() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-loadTask('Rain1400');
+loadTask('CBSD68');
 </script>
 </body>
 </html>
