@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAIR: Structured Latent Flow Matching for All-in-One Image Restoration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:        #0b0f1a;
+    --bg2:       #111827;
+    --bg3:       #1a2235;
+    --border:    rgba(255,255,255,0.07);
+    --accent:    #5b8fff;
+    --accent2:   #a78bfa;
+    --amber:     #f59e0b;
+    --text:      #e2e8f0;
+    --muted:     #94a3b8;
+    --dim:       #64748b;
+    --card-bg:   rgba(255,255,255,0.03);
+    --r:         14px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(11,15,26,0.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+  .nav-links { display: flex; gap: 1.8rem; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 80px 2rem 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 30% 20%, rgba(91,143,255,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 70% 70%, rgba(167,139,250,0.10) 0%, transparent 70%);
+  }
+  .hero-inner { position: relative; max-width: 860px; }
+  .venue-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(91,143,255,0.12);
+    border: 1px solid rgba(91,143,255,0.3);
+    padding: 0.3rem 1rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 1.6rem;
+    text-transform: uppercase;
+  }
+  .venue-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.6rem;
+    background: linear-gradient(135deg, #e2e8f0 0%, #a78bfa 50%, #5b8fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .authors {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+    line-height: 1.9;
+  }
+  .authors a { color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.15); transition: border-color 0.2s; }
+  .authors a:hover { border-color: var(--accent); }
+  .authors sup { color: var(--accent); font-size: 0.7em; }
+  .affiliations {
+    font-size: 0.8rem;
+    color: var(--dim);
+    margin-bottom: 1.8rem;
+  }
+  .hero-links { display: flex; gap: 0.9rem; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.6rem 1.35rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(91,143,255,0.4);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 24px rgba(91,143,255,0.55); }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+  }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.25); background: var(--card-bg); }
+  .btn-ghost {
+    background: rgba(167,139,250,0.1);
+    border: 1.5px solid rgba(167,139,250,0.25);
+    color: var(--accent2);
+  }
+  .btn-ghost:hover { background: rgba(167,139,250,0.18); }
+
+  /* ── Section ── */
+  section { padding: 90px 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.015em;
+  }
+  .section-divider { width: 48px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; margin-bottom: 2.5rem; }
+  p { color: var(--muted); font-size: 0.97rem; margin-bottom: 1rem; }
+
+  /* ── Abstract ── */
+  #abstract { background: var(--bg2); }
+  .abstract-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 2.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .abstract-card::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+  }
+  .abstract-card p { font-size: 1rem; line-height: 1.85; color: #cbd5e1; margin: 0; }
+  .abstract-card strong { color: var(--text); font-weight: 600; }
+
+  /* ── Teaser ── */
+  #teaser { padding: 70px 2rem; }
+  .teaser-img-wrap {
+    border-radius: var(--r);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .teaser-img-wrap img { width: 100%; display: block; }
+  .fig-caption {
+    text-align: center;
+    font-size: 0.83rem;
+    color: var(--dim);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  /* ── Method ── */
+  #method { background: var(--bg2); }
+  .method-img-wrap {
+    border-radius: var(--r);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: white;
+    padding: 1.5rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    margin-bottom: 1rem;
+  }
+  .method-img-wrap img { width: 100%; display: block; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .feature-card:hover { border-color: rgba(91,143,255,0.25); background: rgba(91,143,255,0.04); }
+  .feature-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 0.9rem;
+  }
+  .feature-icon.blue { background: rgba(91,143,255,0.15); }
+  .feature-icon.purple { background: rgba(167,139,250,0.15); }
+  .feature-icon.amber { background: rgba(245,158,11,0.15); }
+  .feature-card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+  .feature-card p { font-size: 0.85rem; margin: 0; }
+
+  /* ── Results / Slider ── */
+  #results { padding: 90px 2rem; }
+  .task-tabs {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .tab-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.15s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tab-btn:hover { border-color: rgba(91,143,255,0.4); color: var(--text); }
+  .tab-btn.active {
+    background: rgba(91,143,255,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  /* Slider widget */
+  .slider-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: var(--r);
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    border: 1px solid var(--border);
+    user-select: none;
+    cursor: ew-resize;
+  }
+  .slider-base-img, .slider-overlay-img {
+    display: block;
+    width: 100%;
+    pointer-events: none;
+  }
+  .slider-overlay-container {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    overflow: hidden;
+    width: 50%;
+    will-change: width;
+  }
+  .slider-overlay-img {
+    position: absolute; top: 0; left: 0;
+    width: 900px; max-width: none;
+  }
+  .slider-divider {
+    position: absolute; top: 0; bottom: 0;
+    left: 50%; width: 3px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    transform: translateX(-50%);
+    will-change: left;
+  }
+  .slider-handle {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: #0b0f1a; font-size: 0.75rem; font-weight: 700;
+    will-change: left;
+    pointer-events: none;
+  }
+  .slider-handle svg { width: 22px; height: 22px; }
+  .slider-label-left, .slider-label-right {
+    position: absolute; bottom: 1rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    pointer-events: none;
+  }
+  .slider-label-left { left: 1rem; background: rgba(0,0,0,0.6); color: #f87171; }
+  .slider-label-right { right: 1rem; background: rgba(0,0,0,0.6); color: #4ade80; }
+  .slider-hint {
+    text-align: center; font-size: 0.78rem; color: var(--dim);
+    margin-top: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  }
+  /* Three-way toggle (Degraded / Ours / GT) */
+  .three-toggle {
+    display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;
+  }
+  .three-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.78rem; font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.15s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .three-btn.active { background: rgba(91,143,255,0.15); border-color: var(--accent); color: var(--accent); }
+  /* Gallery row */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+  .gallery-cell { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .gallery-cell img { width: 100%; display: block; }
+  .gallery-cell-label {
+    text-align: center; font-size: 0.75rem; font-weight: 600;
+    color: var(--dim); padding: 0.4rem 0;
+    background: var(--bg3);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Quantitative ── */
+  #quantitative { background: var(--bg2); }
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .metric-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.2rem 1rem;
+    text-align: center;
+  }
+  .metric-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .metric-label { font-size: 0.8rem; color: var(--dim); margin-top: 0.4rem; font-weight: 500; }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 700px; }
+  th {
+    background: var(--bg3);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  th.task-header { background: rgba(91,143,255,0.08); color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+  td {
+    padding: 0.65rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.method-col { text-align: left; font-weight: 600; color: var(--text); font-size: 0.85rem; }
+  tr.ours-row td { background: rgba(91,143,255,0.06); }
+  tr.ours-row td.method-col { color: var(--accent); }
+  td.best { font-weight: 700; color: var(--text); }
+  td.second { color: #a78bfa; text-decoration: underline; text-decoration-color: rgba(167,139,250,0.5); }
+
+  /* ── BibTeX ── */
+  #bibtex { padding: 80px 2rem; }
+  .bib-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1.5rem 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #94a3b8;
+    line-height: 1.8;
+    position: relative;
+    overflow: hidden;
+  }
+  .bib-block .key { color: var(--accent); }
+  .bib-block .val { color: #a5f3fc; }
+  .bib-block .brace { color: var(--accent2); }
+  .copy-btn {
+    position: absolute; top: 1rem; right: 1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.73rem; font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--dim);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* ── Utility ── */
+  .text-center { text-align: center; }
+  .mt-2 { margin-top: 2rem; }
+  .mt-1 { margin-top: 1rem; }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .abstract-card { padding: 1.5rem; }
+    .gallery-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <span class="nav-brand">SLAIR</span>
+  <div class="nav-links">
+    <a href="#abstract">Abstract</a>
+    <a href="#method">Method</a>
+    <a href="#results">Results</a>
+    <a href="#quantitative">Benchmarks</a>
+    <a href="#bibtex">BibTeX</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<header class="hero" id="top">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="venue-badge">ECCV 2026</div>
+    <h1>SLAIR: Structured Latent Flow Matching for All-in-One Image Restoration</h1>
+
+    <p class="authors">
+      <a href="https://fightforql.github.io">Shuyi Liang</a><sup>1,2*</sup>&nbsp;&nbsp;
+      <a href="#">Yixin Yang</a><sup>1,2*</sup>&nbsp;&nbsp;
+      <a href="#">Hanyue Lou</a><sup>1,2</sup>&nbsp;&nbsp;
+      <a href="#">Yuning Cui</a><sup>3</sup>&nbsp;&nbsp;
+      <a href="#">Boxin Shi</a><sup>1,2,4†</sup>
+    </p>
+    <p class="affiliations">
+      <sup>1</sup>State Key Laboratory of Multimedia Information Processing, School of Computer Science, Peking University &nbsp;|&nbsp;
+      <sup>2</sup>National Engineering Research Center of Visual Technology, PKU &nbsp;|&nbsp;
+      <sup>3</sup>Technical University of Munich &nbsp;|&nbsp;
+      <sup>4</sup>PKU-AI² Robotics Joint Lab of Embodied AI
+      <br><small>* Equal contribution &nbsp; † Corresponding author</small>
+    </p>
+
+    <div class="hero-links">
+      <a class="btn btn-primary" href="https://github.com/Fightforql/SLAIR" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.944 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.74 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        Code
+      </a>
+      <a class="btn btn-outline" href="#" target="_blank">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        Paper (ECCV 2026)
+      </a>
+      <a class="btn btn-ghost" href="#results">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Visual Results
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ── Teaser ── -->
+<section id="teaser" style="background:var(--bg); padding:60px 2rem 0;">
+  <div class="container">
+    <div class="teaser-img-wrap" style="background:#fff; padding:1.5rem;">
+      <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/teaser.png" alt="SLAIR Teaser: Latent Space Separation and ODE Trajectory">
+    </div>
+    <p class="fig-caption">
+      <strong style="color:var(--text)">Fig. 1</strong> — (a) t-SNE visualization showing our Degradation VAE cleanly separating 10 degradation types in latent space, versus the entangled original VAE space. (b) ODE trajectory: a degraded image is progressively restored as <em>t</em> evolves from 0→1, with PSNR monotonically improving from 20.93 to 30.43 dB.
+    </p>
+  </div>
+</section>
+
+<!-- ── Abstract ── -->
+<section id="abstract">
+  <div class="container">
+    <div class="section-label">Abstract</div>
+    <h2>Degradation-Agnostic Restoration via Deterministic Latent Transport</h2>
+    <div class="section-divider"></div>
+    <div class="abstract-card">
+      <p>
+        Image restoration aims to recover high-quality images from degraded observations, yet existing methods struggle with diverse degradation types. In this work, we propose <strong>SLAIR</strong>, an all-in-one image restoration framework integrating <strong>latent space separation</strong> and <strong>deterministic transport</strong>. We introduce a latent-space separation approach that ensures stable, distinct representations of degraded and clean images, facilitating effective flow matching. By learning continuous transport flow in a latent space via an ordinary differential equation (ODE), our method enables <strong>deterministic restoration without relying on degradation labels or stochastic sampling</strong>. While the restoration is performed in the latent space, a <strong>high-frequency refinement module</strong> is introduced into the latent decoder to handle detail distortion during decoding. Experiments demonstrate that SLAIR outperforms existing approaches in terms of both perceptual quality and computational efficiency, making it a robust solution for scalable, degradation-agnostic image restoration.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Method ── -->
+<section id="method">
+  <div class="container">
+    <div class="section-label">Method</div>
+    <h2>Three-Stage Framework</h2>
+    <div class="section-divider"></div>
+
+    <div class="method-img-wrap">
+      <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/figure.png" alt="SLAIR Framework Overview">
+    </div>
+    <p class="fig-caption">
+      <strong style="color:var(--text)">Fig. 2</strong> — SLAIR pipeline. A degraded image is encoded via VAE, structured via latent separation loss, transported deterministically through flow matching (LightningDiT backbone), then decoded with wavelet-based high-frequency refinement.
+    </p>
+
+    <div class="features-grid mt-2">
+      <div class="feature-card">
+        <div class="feature-icon blue">🗂️</div>
+        <h4>① Latent Space Separation</h4>
+        <p>We fine-tune the VAE with a contrastive classification loss to maximize inter-manifold distance between degraded and clean latents. This structured geometry simplifies transport dynamics and stabilizes training.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple">🌊</div>
+        <h4>② Deterministic Flow Matching</h4>
+        <p>A LightningDiT-based velocity field learns continuous ODE transport from z<sub>deg</sub> → z<sub>gt</sub>. No degradation labels needed, no stochastic sampling—just a single deterministic ODE solve at inference.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon amber">✨</div>
+        <h4>③ High-Frequency Refinement</h4>
+        <p>A DWT-based fusion block in the VAE decoder injects restored high-frequency details before final decoding, eliminating latent-to-pixel distortion and enabling arbitrary-resolution inference.</p>
+      </div>
+    </div>
+
+    <!-- HRM figure -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem;">
+      <div>
+        <div class="method-img-wrap" style="padding:1rem;">
+          <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/fusion-results.png" alt="High-frequency refinement ablation">
+        </div>
+        <p class="fig-caption"><strong style="color:var(--text)">Fig. 3</strong> — High-freq refinement ablation on demoiréing. Direct L2 fusion blurs texture; our wavelet fusion cleanly recovers fine patterns.</p>
+      </div>
+      <div>
+        <div class="method-img-wrap" style="padding:1rem; background: var(--bg3);">
+          <img src="https://raw.githubusercontent.com/Fightforql/tmp/main/image/HRM1.png" alt="HRM module detail">
+        </div>
+        <p class="fig-caption"><strong style="color:var(--text)">Fig. 4</strong> — High-Frequency Refinement Module architecture: ODE Solver output fused via DWT-based Fusion Block with VAE decoder features.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Qualitative Results ── -->
+<section id="results" style="background:var(--bg);">
+  <div class="container">
+    <div class="section-label">Qualitative Results</div>
+    <h2>Drag to Compare — Degraded vs. Ours vs. GT</h2>
+    <div class="section-divider"></div>
+    <p>SLAIR handles 8 diverse restoration tasks in a single unified model. Use the tabs to switch between tasks, and drag the slider to compare degraded input with our restored output.</p>
+
+    <!-- Task tabs -->
+    <div class="task-tabs" id="taskTabs">
+      <button class="tab-btn active" data-task="Rain1400" onclick="switchTask(this)">Rain1400</button>
+      <button class="tab-btn" data-task="Outdoor-Rain" onclick="switchTask(this)">Outdoor-Rain</button>
+      <button class="tab-btn" data-task="Raindrop" onclick="switchTask(this)">Raindrop</button>
+      <button class="tab-btn" data-task="UHDSnow" onclick="switchTask(this)">UHDSnow</button>
+      <button class="tab-btn" data-task="SOTS" onclick="switchTask(this)">SOTS (Haze)</button>
+      <button class="tab-btn" data-task="CBSD68" onclick="switchTask(this)">BSD68 (Noise)</button>
+      <button class="tab-btn" data-task="LoL" onclick="switchTask(this)">LoL (Low-light)</button>
+      <button class="tab-btn" data-task="UHDM" onclick="switchTask(this)">UHDM (Moire)</button>
+      <button class="tab-btn" data-task="HDR-Eye" onclick="switchTask(this)">HDR-Eye</button>
+    </div>
+
+    <!-- Slider mode toggle: degraded vs ours, or ours vs gt -->
+    <div class="three-toggle">
+      <button class="three-btn active" id="modeLeft" onclick="setSliderMode('deg-ours')">Degraded ↔ Ours</button>
+      <button class="three-btn" id="modeRight" onclick="setSliderMode('ours-gt')">Ours ↔ GT</button>
+    </div>
+
+    <!-- Image comparison slider -->
+    <div class="slider-wrap" id="sliderWrap">
+      <!-- Base (right image, full width) -->
+      <img id="sliderBaseImg" class="slider-base-img" src="" alt="Right image" draggable="false">
+      <!-- Overlay (left image, clipped) -->
+      <div class="slider-overlay-container" id="sliderOverlayContainer">
+        <img id="sliderOverlayImg" class="slider-overlay-img" src="" alt="Left image" draggable="false">
+      </div>
+      <!-- Divider line & handle -->
+      <div class="slider-divider" id="sliderDivider"></div>
+      <div class="slider-handle" id="sliderHandle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15,18 9,12 15,6"/>
+          <polyline points="9,18 15,12 9,6"/>
+        </svg>
+      </div>
+      <!-- Labels -->
+      <span class="slider-label-left" id="labelLeft">Degraded</span>
+      <span class="slider-label-right" id="labelRight">Ours</span>
+    </div>
+    <p class="slider-hint">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+      Drag the divider left or right to compare
+    </p>
+
+    <!-- All three side by side -->
+    <div class="gallery-grid mt-2" id="galleryGrid">
+      <div class="gallery-cell">
+        <img id="galleryInput" src="" alt="Degraded input">
+        <div class="gallery-cell-label" style="color:#f87171;">Degraded</div>
+      </div>
+      <div class="gallery-cell">
+        <img id="galleryOurs" src="" alt="Our result">
+        <div class="gallery-cell-label" style="color:var(--accent);">Ours (SLAIR)</div>
+      </div>
+      <div class="gallery-cell">
+        <img id="galleryGT" src="" alt="Ground truth">
+        <div class="gallery-cell-label" style="color:#4ade80;">Ground Truth</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quantitative ── -->
+<section id="quantitative">
+  <div class="container">
+    <div class="section-label">Quantitative Benchmarks</div>
+    <h2>State-of-the-Art on 5-Task & 8-Task Benchmarks</h2>
+    <div class="section-divider"></div>
+    <p>SLAIR is evaluated on two settings: <strong style="color:var(--text)">Setting (i)</strong> — comprehensive 8-task benchmark (Rain1400, Outdoor-Rain, Raindrop, UHDSnow, BSD68, LoL, UHDM, HDR-Eye) and <strong style="color:var(--text)">Setting (ii)</strong> — standard 5-task benchmark. Metrics: PSNR↑ / SSIM↑ / LPIPS↓ / FID↓.</p>
+
+    <!-- Key numbers -->
+    <div class="metrics-row mt-2">
+      <div class="metric-card">
+        <div class="metric-num">+5.6%</div>
+        <div class="metric-label">Avg PSNR gain vs. top baselines</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num">−33%</div>
+        <div class="metric-label">LPIPS reduction (perceptual)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num">8 Tasks</div>
+        <div class="metric-label">Handled by single unified model</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num">31.05</div>
+        <div class="metric-label">Avg FID — best among all methods</div>
+      </div>
+    </div>
+
+    <!-- Table: 5-task benchmark (Setting ii) -->
+    <p style="margin-bottom:0.8rem; font-size:0.88rem;"><strong style="color:var(--text)">Table: Standard 5-task all-in-one benchmark</strong> — BSD68, GoPro, LoL, Rain100L, SOTS. <span style="color:var(--text); font-weight:600;">Bold</span> = best, <span style="color:var(--accent2); text-decoration:underline;">underline</span> = second best.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2" style="text-align:left; min-width:100px;">Method</th>
+            <th colspan="4" class="task-header">BSD68</th>
+            <th colspan="4" class="task-header">GoPro</th>
+            <th colspan="4" class="task-header">LoL</th>
+            <th colspan="4" class="task-header">Rain100L</th>
+            <th colspan="4" class="task-header">SOTS</th>
+            <th colspan="4" class="task-header">Average</th>
+          </tr>
+          <tr>
+            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
+            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
+            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
+            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
+            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
+            <th>PSNR↑</th><th>SSIM↑</th><th>LPIPS↓</th><th>FID↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="method-col">AirNet</td>
+            <td>26.17</td><td>.636</td><td>.429</td><td>74.70</td>
+            <td>22.85</td><td>.766</td><td>.275</td><td>60.57</td>
+            <td>24.01</td><td>.720</td><td>.278</td><td>97.91</td>
+            <td>28.76</td><td>.881</td><td>.147</td><td>41.40</td>
+            <td>26.57</td><td>.925</td><td>.056</td><td>19.97</td>
+            <td>25.67</td><td>.786</td><td>.237</td><td>58.91</td>
+          </tr>
+          <tr>
+            <td class="method-col">PromptIR</td>
+            <td>22.32</td><td>.445</td><td>.564</td><td>83.77</td>
+            <td>22.65</td><td>.763</td><td>.276</td><td>59.29</td>
+            <td>25.23</td><td>.771</td><td>.228</td><td>97.15</td>
+            <td>32.16</td><td>.902</td><td>.105</td><td>26.64</td>
+            <td>28.90</td><td>.974</td><td>.016</td><td>4.26</td>
+            <td>26.25</td><td>.771</td><td>.238</td><td>54.22</td>
+          </tr>
+          <tr>
+            <td class="method-col">AdaIR</td>
+            <td>23.04</td><td>.478</td><td>.546</td><td>83.58</td>
+            <td>28.98</td><td>.878</td><td>.161</td><td>28.23</td>
+            <td>22.14</td><td>.734</td><td>.256</td><td>102.82</td>
+            <td>28.85</td><td>.858</td><td>.177</td><td>70.13</td>
+            <td>27.56</td><td>.939</td><td>.041</td><td>11.36</td>
+            <td>26.11</td><td>.777</td><td>.236</td><td>59.22</td>
+          </tr>
+          <tr>
+            <td class="method-col">MoCE-IR</td>
+            <td>25.31</td><td>.587</td><td>.456</td><td>76.79</td>
+            <td class="second">30.46</td><td class="second">.907</td><td class="second">.125</td><td class="second">22.36</td>
+            <td class="second">27.50</td><td class="second">.836</td><td>.169</td><td>96.04</td>
+            <td>29.26</td><td>.863</td><td>.160</td><td>61.48</td>
+            <td class="second">30.08</td><td class="second">.975</td><td class="second">.014</td><td class="second">4.22</td>
+            <td class="second">28.52</td><td class="second">.834</td><td class="second">.185</td><td class="second">52.18</td>
+          </tr>
+          <tr>
+            <td class="method-col">DiffUIR</td>
+            <td>20.41</td><td>.558</td><td>.473</td><td>86.91</td>
+            <td>27.62</td><td>.844</td><td>.201</td><td>40.99</td>
+            <td>19.35</td><td>.809</td><td>.180</td><td>89.85</td>
+            <td>28.26</td><td>.898</td><td>.165</td><td>79.52</td>
+            <td class="best">31.11</td><td class="best">.976</td><td class="best">.011</td><td>9.53</td>
+            <td>25.35</td><td>.817</td><td>.206</td><td>61.36</td>
+          </tr>
+          <tr class="ours-row">
+            <td class="method-col">SLAIR (Ours)</td>
+            <td class="best">29.21</td><td class="best">.846</td><td class="best">.139</td><td class="best">39.99</td>
+            <td>25.91</td><td>.796</td><td>.153</td><td>32.87</td>
+            <td class="best">29.13</td><td class="best">.883</td><td class="best">.083</td><td class="best">45.75</td>
+            <td class="second">31.01</td><td class="best">.943</td><td class="best">.060</td><td class="second">28.89</td>
+            <td>26.67</td><td>.942</td><td>.033</td><td class="best">7.76</td>
+            <td class="best">28.39</td><td class="best">.882</td><td class="best">.094</td><td class="best">31.05</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── BibTeX ── -->
+<section id="bibtex" style="background:var(--bg2);">
+  <div class="container" style="max-width:740px;">
+    <div class="section-label">Citation</div>
+    <h2>BibTeX</h2>
+    <div class="section-divider"></div>
+    <div class="bib-block" id="bibBlock">
+      <button class="copy-btn" onclick="copyBib()">Copy</button>
+      <span class="brace">@inproceedings{</span><span class="val">liang2026slair</span><span class="brace">,</span><br>
+      &nbsp;&nbsp;<span class="key">title</span>     = <span class="val">{SLAIR: Structured Latent Flow Matching for All-in-One Image Restoration}</span>,<br>
+      &nbsp;&nbsp;<span class="key">author</span>    = <span class="val">{Liang, Shuyi and Yang, Yixin and Lou, Hanyue and Cui, Yuning and Shi, Boxin}</span>,<br>
+      &nbsp;&nbsp;<span class="key">booktitle</span> = <span class="val">{Proceedings of the European Conference on Computer Vision}</span>,<br>
+      &nbsp;&nbsp;<span class="key">year</span>      = <span class="val">{2026}</span><br>
+      <span class="brace">}</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <p>SLAIR · ECCV 2026 &nbsp;|&nbsp; <a href="https://camera.pku.edu.cn" target="_blank">Camera Intelligence Lab, Peking University</a></p>
+  <p style="margin-top:0.3rem;">Website template inspired by <a href="https://petal-pku.pages.dev" target="_blank">PETAL</a>.</p>
+</footer>
+
+<script>
+// ── Image assets ──────────────────────────────────────────────────────────────
+const BASE = 'https://raw.githubusercontent.com/Fightforql/tmp/main/image/';
+const tasks = {
+  'Rain1400':     { label: 'Deraining (Rain1400)' },
+  'Outdoor-Rain': { label: 'Deraining (Outdoor-Rain)' },
+  'Raindrop':     { label: 'Raindrop Removal' },
+  'UHDSnow':      { label: 'Snow Removal (UHDSnow)' },
+  'SOTS':         { label: 'Dehazing (SOTS)' },
+  'CBSD68':       { label: 'Denoising (BSD68)' },
+  'LoL':          { label: 'Low-light Enhancement (LoL)' },
+  'UHDM':         { label: 'Demoiréing (UHDM)' },
+  'HDR-Eye':      { label: 'HDR Reconstruction (HDR-Eye)' },
+};
+
+// ── Slider state ──────────────────────────────────────────────────────────────
+let currentTask = 'Rain1400';
+let sliderMode  = 'deg-ours'; // 'deg-ours' | 'ours-gt'
+let dragging    = false;
+
+const sliderWrap      = document.getElementById('sliderWrap');
+const sliderBaseImg   = document.getElementById('sliderBaseImg');
+const sliderOverlayImg= document.getElementById('sliderOverlayImg');
+const sliderOverlayCt = document.getElementById('sliderOverlayContainer');
+const sliderDivider   = document.getElementById('sliderDivider');
+const sliderHandle    = document.getElementById('sliderHandle');
+const labelLeft       = document.getElementById('labelLeft');
+const labelRight      = document.getElementById('labelRight');
+const galleryInput    = document.getElementById('galleryInput');
+const galleryOurs     = document.getElementById('galleryOurs');
+const galleryGT       = document.getElementById('galleryGT');
+
+function imgUrl(task, type) {
+  // type: 'input_stitched' | 'Ours_stitched' | 'gt_stitched'
+  return `${BASE}${task}/${type}.png`;
+}
+
+function loadTask(task) {
+  currentTask = task;
+  const deg  = imgUrl(task, 'input_stitched');
+  const ours = imgUrl(task, 'Ours_stitched');
+  const gt   = imgUrl(task, 'gt_stitched');
+
+  // Gallery
+  galleryInput.src = deg;
+  galleryOurs.src  = ours;
+  galleryGT.src    = gt;
+
+  // Slider
+  applySliderMode();
+}
+
+function applySliderMode() {
+  const task = currentTask;
+  const deg  = imgUrl(task, 'input_stitched');
+  const ours = imgUrl(task, 'Ours_stitched');
+  const gt   = imgUrl(task, 'gt_stitched');
+
+  if (sliderMode === 'deg-ours') {
+    sliderBaseImg.src    = ours;  // right
+    sliderOverlayImg.src = deg;   // left (clipped)
+    labelLeft.textContent  = 'Degraded';
+    labelRight.textContent = 'Ours';
+    labelLeft.style.color  = '#f87171';
+    labelRight.style.color = '#60a5fa';
+  } else {
+    sliderBaseImg.src    = gt;    // right
+    sliderOverlayImg.src = ours;  // left
+    labelLeft.textContent  = 'Ours';
+    labelRight.textContent = 'GT';
+    labelLeft.style.color  = '#60a5fa';
+    labelRight.style.color = '#4ade80';
+  }
+  setSliderPos(0.5);
+}
+
+function setSliderPos(fraction) {
+  const pct = `${(fraction * 100).toFixed(2)}%`;
+  sliderOverlayCt.style.width = pct;
+  sliderDivider.style.left    = pct;
+  sliderHandle.style.left     = pct;
+  // overlay image needs to be full width always
+  const wrapW = sliderWrap.getBoundingClientRect().width || 900;
+  sliderOverlayImg.style.width = wrapW + 'px';
+}
+
+function getPosFraction(e) {
+  const rect = sliderWrap.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+}
+
+sliderWrap.addEventListener('mousedown',  e => { dragging = true; setSliderPos(getPosFraction(e)); });
+sliderWrap.addEventListener('touchstart', e => { dragging = true; setSliderPos(getPosFraction(e)); }, { passive: true });
+window.addEventListener('mousemove', e => { if (dragging) { setSliderPos(getPosFraction(e)); } });
+window.addEventListener('touchmove', e => { if (dragging) { setSliderPos(getPosFraction(e)); } }, { passive: true });
+window.addEventListener('mouseup',   () => { dragging = false; });
+window.addEventListener('touchend',  () => { dragging = false; });
+
+// keep overlay width synced on resize
+window.addEventListener('resize', () => setSliderPos(parseFloat(sliderOverlayCt.style.width)/100));
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTask(btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadTask(btn.dataset.task);
+}
+
+function setSliderMode(mode) {
+  sliderMode = mode;
+  document.getElementById('modeLeft').classList.toggle('active',  mode === 'deg-ours');
+  document.getElementById('modeRight').classList.toggle('active', mode === 'ours-gt');
+  applySliderMode();
+}
+
+// ── BibTeX copy ───────────────────────────────────────────────────────────────
+function copyBib() {
+  const bib = `@inproceedings{liang2026slair,\n  title     = {SLAIR: Structured Latent Flow Matching for All-in-One Image Restoration},\n  author    = {Liang, Shuyi and Yang, Yixin and Lou, Hanyue and Cui, Yuning and Shi, Boxin},\n  booktitle = {Proceedings of the European Conference on Computer Vision},\n  year      = {2026}\n}`;
+  navigator.clipboard.writeText(bib).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+loadTask('Rain1400');
+</script>
+</body>
+</html>
